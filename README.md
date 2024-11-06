@@ -14,3 +14,9 @@ V mapi `database` najdeš **SQL dump** podatkovne baze. Napisati je potrebno eno
 ## Rešitev
 
 Končano rešitev commitaj in pushaj v ta repozitorij skupaj z morebitnimi navodili za zagon aplikacije.
+
+## API endpoint
+http://localhost:8000/api/get-category-tree
+
+## Frontend
+http://localhost:8000/
