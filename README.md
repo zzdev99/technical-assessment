@@ -34,6 +34,13 @@ Končano rešitev commitaj in pushaj v ta repozitorij skupaj z morebitnimi navod
 - Uvozimo dump podatkovne baze, če ta še ni uvožen
 - Za zagon projekta v testnem okolju poženemo ukaz `php artisan serve` in v novem oknu terminala poženemo še `npm run dev`
 
+## Rešitev 1:
+- na `main` branchu je rešitev, kjer se podmeniji odpirajo kot accordion
+
+## Rešitev 2:
+- na `alt-menu` branchu je rešitev, kjer se nivoji menija nalagajo kot stack (eden čez drugega)
+- ta rešitev je bolj pregledna sploh, ko gre za neomejeno število nivojev kategorij
+
 ## API endpoint
 http://localhost:8000/api/get-category-tree
 
