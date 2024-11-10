@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $appends = ['count'/*, 'successors_count'*/];
+    protected $appends = ['count'];
 
     // Relations
     public function children()
@@ -15,9 +15,25 @@ class Category extends Model
             ->with('children');
     }
 
+    public function allChildren()
+    {
+        return $this->children()->with('allChildren');
+    }
+
     public function products()
     {
         return $this->belongsToMany(Product::class, 'category_product');
+    }
+
+    public function getAllDescendantIds()
+    {
+        $descendants = collect([$this->id]);
+
+        $this->children->each(function ($child) use (&$descendants) {
+            $descendants = $descendants->merge($child->getAllDescendantIds());
+        });
+
+        return $descendants->unique();
     }
 
     // Scope
@@ -27,22 +43,14 @@ class Category extends Model
     }
 
     // Accessors
+
+    // Prikaže število izdelkov v trenutni kategoriji + vseh child kategorij
     public function getCountAttribute()
     {
-        return $this->products()->count();
-    }
+        $categoryIds = $this->getAllDescendantIds();
 
-    //* SUCCESSORS COUNT
-    // public function getSuccessorsCountAttribute()
-    // {
-    //     return Category::where('parent_id', $this->id)
-    //         ->orWhere(function ($query) {
-    //             $query->whereIn('parent_id', function ($subquery) {
-    //                 $subquery->select('id')
-    //                     ->from('categories')
-    //                     ->where('parent_id', $this->id);
-    //             });
-    //         })
-    //         ->count();
-    // }
+        return Product::whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('categories.id', $categoryIds);
+        })->count();
+    }
 }
