@@ -1,7 +1,9 @@
 <template>
     <div class="sidebar bg-gray-300">
-        <MenuSkeleton v-if="isLoading" :lines="12"/>
-        <MenuItem v-for="category in menuItems" :key="category.id" :item="category" />
+        <MenuSkeleton v-if="isLoading" :lines="12" />
+        <MenuItem v-if="!this.getOpenItem" v-for="category in menuItems" :key="category.id" :item="category" />
+
+        <MenuItem v-else :item="currentNode" />
     </div>
 </template>
 
@@ -19,9 +21,12 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'isLoading'
-        ])
-    }
+            'isLoading',
+            'getOpenItem',
+            'getCategories',
+            'currentNode',
+        ]),
+    },
 }
 </script>
 

@@ -1,5 +1,20 @@
 import { createStore } from "vuex"
 
+export function getCurrentNode(categories, itemId) {
+    if (!categories || categories.length === 0) return null;
+
+    for (const node of categories) {
+        if (node.id === itemId) {
+            return node;
+        }
+
+        if (node.children && node.children.length > 0) {
+            const found = getCurrentNode(node.children, itemId);
+            if (found) return found;
+        }
+    }
+}
+
 export default createStore({
     state: {
         loading: null,
@@ -32,5 +47,6 @@ export default createStore({
         getCategories: state => state.categories,
         getOpenItem: state => state.openItem,
         isLoading: state => state.isLoading,
+        currentNode: state => getCurrentNode(state.categories, state.openItem)
     }
 })

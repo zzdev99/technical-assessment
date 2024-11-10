@@ -1,5 +1,12 @@
 <template>
     <div class="menu-item" :class="[{ 'has-children': childCount }, depthClass]">
+        <div class="back" v-if="item.id == getOpenItem" @click="setOpenItem(item.parent_id)">
+            <span class="material-symbols-outlined">
+                chevron_left
+            </span>
+            {{ parentName || 'Na začetek' }}
+        </div>
+
         <div @click="expandHandler" class="menu-item-name">
             {{ item.name }}
             <span class="product-count">({{ productCount }})</span>
@@ -17,6 +24,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import { getCurrentNode } from '../store';
 
 export default {
     name: 'MenuItem',
@@ -30,7 +38,8 @@ export default {
     computed: {
         ...mapGetters([
             'getOpenItem',
-            'getCategories'
+            'getCategories',
+            'currentNode',
         ]),
         childCount() {
             return this.item.children.length
@@ -42,14 +51,20 @@ export default {
             return this.item.count
         },
         showChildren() {
-            if (this.item.id == this.getOpenItem || this.isAncestorOfSelectedItem(this.item)) return true
+            if (this.item.id == this.getOpenItem || this.isChildOfSelectedItem()) return true
             return false
+        },
+        parentName() {
+            return getCurrentNode(this.getCategories, this.item.parent_id)?.name
         }
     },
     methods: {
         ...mapActions([
             'setOpenItem'
         ]),
+        isChildOfSelectedItem() {
+            if (this.item.children.some(child => child.id == this.getOpenItem)) return true;
+        },
         isAncestorOfSelectedItem(item) {
             if (item.children.length == 0) return false
 
@@ -61,12 +76,7 @@ export default {
             // if has not children make it not selectable
             if (this.item.children.length == 0) return
 
-            // if already open, close it
-            if (this.item.id == this.getOpenItem) {
-                this.setOpenItem(this.item.parent_id)
-            } else {
-                this.setOpenItem(this.item.id)
-            }
+            this.setOpenItem(this.item.id)
         }
     }
 }
@@ -93,8 +103,7 @@ export default {
     }
 
     .children {
-        margin-top: 1rem;
-        margin-bottom: 1rem;
+        margin-top: .5rem;
     }
 
     .dropdown-arrow {
@@ -107,6 +116,13 @@ export default {
     .menu-item-name {
         position: relative;
         padding-right: 1.5em;
+    }
+
+    .back {
+        display: flex;
+        align-items: center;
+        column-gap: .5rem;
+        margin-bottom: 1.5rem;
     }
 }
 </style>
