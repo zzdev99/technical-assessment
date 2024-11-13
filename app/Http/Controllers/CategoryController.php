@@ -9,7 +9,7 @@ class CategoryController extends Controller
     public function getCategoryTree()
     {
         $categories = Category::root()
-            ->with(['children.children'])
+            ->with('children')
             ->get();
 
         return response()->json([

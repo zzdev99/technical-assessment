@@ -48,7 +48,7 @@ export default {
             return `depth-${this.depth}`
         },
         productCount() {
-            return this.item.count
+            return this.item.products_count
         },
         showChildren() {
             if (this.item.id == this.getOpenItem || this.isChildOfSelectedItem()) return true
